@@ -7,6 +7,7 @@ import { cakesApi, cartApi, wishlistApi, imgUrl } from '@/lib/api'
 import { useAuthStore, useCartStore, useWishlistStore } from '@/store'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
+import DeliveryDatePicker from '@/components/cake/DeliveryDatePicker'
 
 export default function CakeDetailPage() {
   const { id: slug } = useParams()
@@ -289,6 +290,7 @@ export default function CakeDetailPage() {
                     {adding ? <span className="spinner" /> : <ShoppingCart className="w-4 h-4" />}
                     {adding ? 'Adding...' : 'Add to Cart'}
                   </button>
+                  <DeliveryDatePicker prepHours={cake.prep_time_hours || 24} />
                   <button onClick={handleWishlist}
                     className={clsx('btn-icon w-12 h-12 rounded-xl border transition-all',
                       inWishlist ? 'border-brand-200 bg-brand-50 text-brand-500' : 'border-gray-200 hover:border-brand-200 hover:text-brand-500')}>
