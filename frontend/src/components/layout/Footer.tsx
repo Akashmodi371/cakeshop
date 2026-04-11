@@ -79,10 +79,10 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-brand-400 flex-shrink-0 mt-0.5" />
-                <span>123 Cake Lane, Indore, Madhya Pradesh, 452001</span>
+                <span>1, Lodhi Mohalla Barwaha, Madhya Pradesh, 451115</span>
               </li>
               <li>
-                <a href="mailto:hello@sweetbliss.com" className="flex items-center gap-2 hover:text-brand-500 transition-colors">
+                <a href="mailto:priyankagarg371@gmail.com" className="flex items-center gap-2 hover:text-brand-500 transition-colors">
                   <Mail className="w-3.5 h-3.5 text-brand-400 flex-shrink-0" />
                   hello@sweetbliss.com
                 </a>
@@ -96,7 +96,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-pink-100 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
-          <p>© {new Date().getFullYear()} Sweet Bliss Cakery. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Agrawal Cake House Cakery. All rights reserved.</p>
           <p className="flex items-center gap-1">Made with <Heart className="w-3 h-3 text-brand-400 fill-brand-400" /> in India</p>
         </div>
       </div>

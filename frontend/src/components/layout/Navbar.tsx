@@ -45,8 +45,8 @@ export default function Navbar() {
           📞 Call us: {phone}
         </a>
       </div>
-
-      {/* Main navbar */}
+      
+{/* Main navbar */}
       <nav className={clsx(
         'sticky top-0 z-50 transition-all duration-300',
         scrolled

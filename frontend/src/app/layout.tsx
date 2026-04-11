@@ -6,8 +6,8 @@ import CartDrawer from '@/components/layout/CartDrawer'
 import Footer from '@/components/layout/Footer'
 
 export const metadata: Metadata = {
-  title: { default: 'Sweet Bliss Cakery', template: '%s | Sweet Bliss Cakery' },
-  description: 'Handcrafted cakes made with love — delivered fresh to your door.',
+  title: { default: 'Agrawal Cake House Barwaha', template: '%s | Agrawal Cake House' },
+  description: 'Premium handcrafted cakes in Barwaha — fresh daily, delivered to your door.',
   keywords: ['cakes', 'birthday cake', 'wedding cake', 'custom cake', 'bakery'],
   openGraph: {
     type: 'website',
