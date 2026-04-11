@@ -7,6 +7,7 @@ import { ShoppingCart, Heart, User, Search, Menu, X, Phone } from 'lucide-react'
 import { useAuthStore, useCartStore } from '@/store'
 import { cartApi } from '@/lib/api'
 import clsx from 'clsx'
+import SearchBar from './SearchBar'
 import AnnouncementBar from './AnnouncementBar'
 
 export default function Navbar() {
@@ -85,10 +86,10 @@ export default function Navbar() {
             {/* Right actions */}
             <div className="flex items-center gap-1">
               {/* Search */}
-              <Link href="/cakes?search=" className="btn-icon hidden sm:flex" title="Search">
-                <Search className="w-4.5 h-4.5" />
-              </Link>
-
+            <div className="hidden md:block">
+              <SearchBar />
+            </div>
+              
               {/* Wishlist */}
               {user && (
                 <Link href="/wishlist" className="btn-icon hidden sm:flex" title="Wishlist">
