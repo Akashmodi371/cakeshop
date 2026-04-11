@@ -38,7 +38,7 @@ export default async function HomePage() {
                 </div>
               )}
               <h1 className="font-display text-5xl md:text-6xl font-semibold text-gray-900 leading-[1.1] animate-fade-up delay-100">
-                {hero?.title || 'Celebrate Every'}{' '}
+                {hero?.title || 'Barwaha Ki Sabse'}{' '}
                 <span className="bg-gradient-to-r from-brand-500 to-sky-500 bg-clip-text text-transparent">
                   Moment
                 </span>
@@ -227,7 +227,6 @@ export default async function HomePage() {
                         src={cake.images?.[0]?.url || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200'}
                         alt={cake.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                        onError={e => { (e.target as any).src = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200' }}
                       />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -261,7 +260,6 @@ export default async function HomePage() {
                         src={cake.images?.[0]?.url || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200'}
                         alt={cake.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                        onError={e => { (e.target as any).src = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200' }}
                       />
                     </div>
                     <div className="flex-1 min-w-0">

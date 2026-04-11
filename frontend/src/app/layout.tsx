@@ -3,6 +3,7 @@ import './globals.css'
 import { Toaster } from 'react-hot-toast'
 import Navbar from '@/components/layout/Navbar'
 import CartDrawer from '@/components/layout/CartDrawer'
+import WhatsAppButton from '@/components/layout/WhatsAppButton'
 import Footer from '@/components/layout/Footer'
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="min-h-screen">{children}</main>
         <Footer />
         <CartDrawer />
+        <WhatsAppButton />
         <Toaster
           position="top-center"
           toastOptions={{

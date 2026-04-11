@@ -145,9 +145,9 @@ export async function runStartup() {
     );
 
     INSERT INTO admin_settings (key, value) VALUES
-      ('shop_name', '"Sweet Bliss Cakery"'),
-      ('shop_phone', '"+91-9876543210"'),
-      ('shop_address', '"123 Cake Lane, Indore, MP"'),
+      ('shop_name', '"Agrawal Cake House Barwaha"'),
+      ('shop_phone', '"+91-8966889637"'),
+      ('shop_address', '"1, Lodhi Mohalla Barwaha MP"'),
       ('currency', '"INR"'),
       ('currency_symbol', '"₹"'),
       ('delivery_charge', '60'),
