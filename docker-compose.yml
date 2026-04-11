@@ -1,0 +1,113 @@
+version: '3.9'
+
+services:
+  # ── PostgreSQL ──────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: cakeshop_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cakeshop
+      POSTGRES_USER: cakeshop
+      POSTGRES_PASSWORD: cakeshop123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cakeshop"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cakeshop_net
+
+  # ── Backend (Fastify) ───────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cakeshop_api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://cakeshop:cakeshop123@postgres:5432/cakeshop
+      JWT_SECRET: change-this-to-a-strong-secret-min-32-chars-production
+      PORT: 3001
+      NODE_ENV: production
+      UPLOADS_DIR: /app/uploads
+      MAX_FILE_SIZE: "10485760"
+      ADMIN_EMAIL: admin@cakeshop.com
+      ADMIN_PASSWORD: Admin@123
+      FRONTEND_URL: "*"
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - cakeshop_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3001/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # ── DB Migrations + Seed (runs once) ───────────────────────────
+  migrate:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cakeshop_migrate
+    command: sh -c "node src/db/migrate.js && node src/db/seed.js"
+    environment:
+      DATABASE_URL: postgresql://cakeshop:cakeshop123@postgres:5432/cakeshop
+      ADMIN_EMAIL: admin@cakeshop.com
+      ADMIN_PASSWORD: Admin@123
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - cakeshop_net
+    restart: "no"
+
+  # ── Frontend (Next.js) ──────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ""
+        NEXT_PUBLIC_SHOP_PHONE: "+91-9876543210"
+    container_name: cakeshop_web
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ""
+      NEXT_PUBLIC_SHOP_PHONE: "+91-9876543210"
+      NODE_ENV: production
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - cakeshop_net
+
+  # ── Nginx (reverse proxy) ───────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: cakeshop_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - uploads_data:/var/www/uploads:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - cakeshop_net
+
+volumes:
+  postgres_data:
+  uploads_data:
+
+networks:
+  cakeshop_net:
+    driver: bridge
