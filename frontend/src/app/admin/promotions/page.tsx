@@ -75,6 +75,7 @@ export default function AdminPromotionsPage() {
             <option value="hero">Hero (top)</option>
             <option value="featured">Featured Banner</option>
             <option value="banner">Mid-page Banner</option>
+            <option value="announcement">Announcement Bar</option>
           </select>
         </div>
         <div>

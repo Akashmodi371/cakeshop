@@ -7,6 +7,7 @@ import { ShoppingCart, Heart, User, Search, Menu, X, Phone } from 'lucide-react'
 import { useAuthStore, useCartStore } from '@/store'
 import { cartApi } from '@/lib/api'
 import clsx from 'clsx'
+import AnnouncementBar from './AnnouncementBar'
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -39,12 +40,7 @@ export default function Navbar() {
   return (
     <>
       {/* Top bar */}
-      <div className="bg-gradient-to-r from-brand-500 to-sky-500 text-white text-xs py-2 px-4 text-center">
-        <span>🎂 Free delivery on orders above ₹500 &nbsp;|&nbsp;</span>
-        <a href={`tel:${phone}`} className="hover:underline font-medium">
-          📞 Call us: {phone}
-        </a>
-      </div>
+      <AnnouncementBar />
       
 {/* Main navbar */}
       <nav className={clsx(
