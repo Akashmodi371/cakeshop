@@ -3,8 +3,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Cake, Eye, EyeOff } from 'lucide-react'
+import { getFirebaseAuth } from '@/lib/firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
 import { authApi } from '@/lib/api'
 import { useAuthStore, useCartStore } from '@/store'
 import toast from 'react-hot-toast'
@@ -25,6 +25,8 @@ export default function LoginPage() {
     setLoading(true)
     try {
       // Firebase login
+      const auth = getFirebaseAuth()
+      if (!auth) return
       const cred = await signInWithEmailAndPassword(auth, email, password)
       const firebaseToken = await cred.user.getIdToken()
 

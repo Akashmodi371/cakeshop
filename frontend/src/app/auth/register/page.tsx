@@ -3,8 +3,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Cake, Eye, EyeOff } from 'lucide-react'
+import { getFirebaseAuth } from '@/lib/firebase'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
 import { authApi } from '@/lib/api'
 import { useAuthStore } from '@/store'
 import toast from 'react-hot-toast'
@@ -26,6 +26,8 @@ export default function RegisterPage() {
     setLoading(true)
     try {
       // Create Firebase user
+      const auth = getFirebaseAuth()
+      if (!auth) return
       const cred = await createUserWithEmailAndPassword(auth, form.email, form.password)
       await updateProfile(cred.user, { displayName: form.name })
       const firebaseToken = await cred.user.getIdToken()
