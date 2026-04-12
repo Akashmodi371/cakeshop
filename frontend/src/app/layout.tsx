@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   keywords: ['cakes', 'birthday cake', 'wedding cake', 'custom cake', 'bakery'],
   openGraph: {
     type: 'website',
-    title: 'Sweet Bliss Cakery',
+    title: 'Agrawal Cake House',
     description: 'Handcrafted cakes made with love.',
   },
 }

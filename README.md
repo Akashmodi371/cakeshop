@@ -1,4 +1,4 @@
-# 🎂 Sweet Bliss Cakery — Full Stack E-Commerce Platform
+# 🎂 Agrawal Cake House — Full Stack E-Commerce Platform
 
 A beautiful, production-ready cake shop built with **Next.js 14**, **Fastify**, **PostgreSQL**, and **Docker**.
 

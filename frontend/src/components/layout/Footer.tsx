@@ -15,7 +15,7 @@ export default function Footer() {
                 <Cake className="w-4 h-4 text-white" />
               </div>
               <div>
-                <div className="font-display font-semibold text-gray-900">Sweet Bliss</div>
+                <div className="font-display font-semibold text-gray-900">Agrawal Cake House</div>
                 <div className="text-[10px] text-brand-500 tracking-widest font-medium">CAKERY</div>
               </div>
             </div>
@@ -84,7 +84,7 @@ export default function Footer() {
               <li>
                 <a href="mailto:priyankagarg371@gmail.com" className="flex items-center gap-2 hover:text-brand-500 transition-colors">
                   <Mail className="w-3.5 h-3.5 text-brand-400 flex-shrink-0" />
-                  hello@sweetbliss.com
+                  hello@agrawalcakehouse.com
                 </a>
               </li>
             </ul>

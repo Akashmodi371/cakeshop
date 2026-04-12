@@ -61,6 +61,8 @@ export const authApi = {
   me: () => api.get<any>('/api/auth/me'),
   updateProfile: (body: { name?: string; phone?: string }) =>
     api.patch('/api/auth/me', body),
+  firebaseSync: (firebaseToken: string, name?: string, phone?: string) =>
+  api.post<{ token: string; user: any }>('/api/auth/firebase-sync', { firebase_token: firebaseToken, name, phone }),
   changePassword: (currentPassword: string, newPassword: string) =>
     api.post('/api/auth/change-password', { currentPassword, newPassword }),
 }

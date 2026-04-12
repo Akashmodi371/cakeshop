@@ -175,9 +175,9 @@ const migrations = `
 
   -- Default admin settings
   INSERT INTO admin_settings (key, value) VALUES
-    ('shop_name', '"Sweet Bliss Cakery"'),
-    ('shop_phone', '"+91-9876543210"'),
-    ('shop_address', '"123 Cake Lane, Indore, MP"'),
+    ('shop_name', '"Agrawal Cake House"'),
+    ('shop_phone', '"+91-8966889638"'),
+    ('shop_address', '"1, Lodhi Mohalla Barwaha"'),
     ('currency', '"INR"'),
     ('currency_symbol', '"₹"'),
     ('delivery_charge', '60'),

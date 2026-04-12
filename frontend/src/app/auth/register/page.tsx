@@ -3,6 +3,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Cake, Eye, EyeOff } from 'lucide-react'
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+import { auth } from '@/lib/firebase'
 import { authApi } from '@/lib/api'
 import { useAuthStore } from '@/store'
 import toast from 'react-hot-toast'
@@ -20,14 +22,26 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (form.password.length < 8) { setError('Password must be at least 8 characters'); return }
-    setError(''); setLoading(true)
+    setError('')
+    setLoading(true)
     try {
-      const { token, user } = await authApi.register(form)
+      // Create Firebase user
+      const cred = await createUserWithEmailAndPassword(auth, form.email, form.password)
+      await updateProfile(cred.user, { displayName: form.name })
+      const firebaseToken = await cred.user.getIdToken()
+
+      // Sync with backend
+      const { token, user } = await authApi.firebaseSync(firebaseToken, form.name, form.phone)
       setAuth(user, token)
-      toast.success(`Welcome, ${user.name?.split(' ')[0]}! 🎂`)
+
+      toast.success('Welcome, ' + form.name.split(' ')[0] + '! 🎂')
       router.push('/')
-    } catch (err: any) { setError(err.message) }
-    finally { setLoading(false) }
+    } catch (err: any) {
+      const msg = err.code === 'auth/email-already-in-use' ? 'Email already registered'
+        : err.code === 'auth/weak-password' ? 'Password too weak'
+        : err.message
+      setError(msg)
+    } finally { setLoading(false) }
   }
 
   return (
@@ -39,7 +53,7 @@ export default function RegisterPage() {
               <Cake className="w-7 h-7 text-white" />
             </div>
             <h1 className="font-display text-2xl font-semibold text-gray-900">Create Account</h1>
-            <p className="text-gray-400 text-sm mt-1">Join Sweet Bliss and start ordering</p>
+            <p className="text-gray-400 text-sm mt-1">Join Agrawal Cake House</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -62,7 +76,7 @@ export default function RegisterPage() {
                   placeholder="Min 8 characters" value={form.password}
                   onChange={update('password')} required />
                 <button type="button" onClick={() => setShowPass(p => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
                   {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>

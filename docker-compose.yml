@@ -59,8 +59,8 @@ services:
     command: sh -c "node src/db/migrate.js && node src/db/seed.js"
     environment:
       DATABASE_URL: postgresql://cakeshop:cakeshop123@postgres:5432/cakeshop
-      ADMIN_EMAIL: admin@cakeshop.com
-      ADMIN_PASSWORD: Admin@123
+      ADMIN_EMAIL: admin@agrawalcakehouse.com
+      ADMIN_PASSWORD: AgrawalAdmin@2024
     depends_on:
       postgres:
         condition: service_healthy

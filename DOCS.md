@@ -1,4 +1,4 @@
-# 🎂 Sweet Bliss Cakery — Complete Developer Documentation
+# 🎂 Agrawal Cake House — Complete Developer Documentation
 
 > **How to use this doc:** Every section tells you *which file* controls *what*. If you want to change something and don't know where — search this document for the feature name. You'll find the exact file path, what it does, and what you can change inside it.
 
@@ -24,7 +24,7 @@
 
 ## 1. Project Overview
 
-Sweet Bliss Cakery is a **full-stack e-commerce platform** for a cake shop. It has two sides:
+Agrawal Cake House is a **full-stack e-commerce platform** for a cake shop. It has two sides:
 
 - **Customer side** — Browse cakes, search, filter, save to wishlist, add to cart, view details, write reviews, report cakes, call to order directly
 - **Admin side** — Full portal to manage cakes, images, categories, promotions/banners, reports, settings, users
@@ -345,7 +345,7 @@ Key-value store for shop configuration. No schema migration needed to add new se
 
 | Key | Default Value | What it controls |
 |---|---|---|
-| `shop_name` | "Sweet Bliss Cakery" | Shown in footer |
+| `shop_name` | "Agrawal Cake House" | Shown in footer |
 | `shop_phone` | "+91-9876543210" | Call button number |
 | `shop_address` | "123 Cake Lane..." | Shown in footer |
 | `currency` | "INR" | Currency code |

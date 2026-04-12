@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import { query } from '../db/pool.js'
 import { authenticate } from '../middleware/auth.js'
+import { verifyFirebaseToken } from '../middleware/firebaseAuth.js'
 
 export default async function authRoutes(fastify) {
   // Register
@@ -79,6 +80,55 @@ export default async function authRoutes(fastify) {
     delete user.password_hash
     reply.send({ token, user })
   })
+
+// Firebase sync — called after Firebase login/register
+fastify.post('/firebase-sync', async (request, reply) => {
+  const { firebase_token, name, phone } = request.body
+
+  // Verify Firebase token
+  let firebaseUser
+  try {
+    const admin = (await import('firebase-admin')).default
+    firebaseUser = await admin.auth().verifyIdToken(firebase_token)
+  } catch {
+    return reply.code(401).send({ error: 'Invalid Firebase token' })
+  }
+
+  const { uid, email } = firebaseUser
+
+  // Check if user exists
+  let { rows } = await query(
+    'SELECT * FROM users WHERE firebase_uid = $1 OR email = $2',
+    [uid, email]
+  )
+
+  let user
+  if (rows.length === 0) {
+    // New user — create
+    const { rows: newRows } = await query(`
+      INSERT INTO users (name, email, firebase_uid, phone, role, is_verified)
+      VALUES ($1, $2, $3, $4, 'customer', true)
+      RETURNING id, name, email, phone, role, avatar_url
+    `, [name || email.split('@')[0], email, uid, phone || null])
+    user = newRows[0]
+  } else {
+    // Existing user — update firebase_uid if missing
+    const { rows: updRows } = await query(`
+      UPDATE users SET firebase_uid = $1, updated_at = NOW()
+      WHERE id = $2
+      RETURNING id, name, email, phone, role, avatar_url
+    `, [uid, rows[0].id])
+    user = updRows[0]
+  }
+
+  // Generate our JWT
+  const token = fastify.jwt.sign(
+    { id: user.id, email: user.email, role: user.role, name: user.name },
+    { expiresIn: '30d' }
+  )
+
+  reply.send({ token, user })
+})
 
   // Get current user
   fastify.get('/me', { preHandler: [authenticate] }, async (request, reply) => {
