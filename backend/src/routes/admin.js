@@ -3,9 +3,16 @@ import { authenticateAdmin } from '../middleware/auth.js'
 import { createSlug } from '../utils/slug.js'
 import path from 'path'
 import fs from 'fs/promises'
+import { v2 as cloudinary } from 'cloudinary'
 import { v4 as uuidv4 } from 'uuid'
 
 const UPLOADS_DIR = process.env.UPLOADS_DIR || './uploads'
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
 
 export default async function adminRoutes(fastify) {
   // Dashboard stats
@@ -210,7 +217,6 @@ export default async function adminRoutes(fastify) {
   fastify.post('/cakes/:id/images', { preHandler: [authenticateAdmin] }, async (request, reply) => {
     const cakeId = request.params.id
 
-    // Check existing image count
     const countRes = await query('SELECT COUNT(*) FROM cake_images WHERE cake_id = $1', [cakeId])
     const existing = parseInt(countRes.rows[0].count)
     if (existing >= 10) {
@@ -224,42 +230,27 @@ export default async function adminRoutes(fastify) {
       if (part.type !== 'file') continue
       if (existing + uploaded.length >= 10) break
 
-      const ext = path.extname(part.filename).toLowerCase()
-      const allowed = ['.jpg', '.jpeg', '.png', '.webp', '.avif']
-      if (!allowed.includes(ext)) continue
-
-      const filename = `${uuidv4()}${ext}`
-      const filepath = path.join(UPLOADS_DIR, filename)
-
-      // Ensure uploads dir exists
-      await fs.mkdir(UPLOADS_DIR, { recursive: true })
-
-      // Save the file
       const buffer = await part.toBuffer()
-      if (buffer.length > parseInt(process.env.MAX_FILE_SIZE || 10485760)) {
-        continue // Skip files over 10MB
-      }
-      await fs.writeFile(filepath, buffer)
+      if (buffer.length > parseInt(process.env.MAX_FILE_SIZE || 10485760)) continue
 
-      // Try to get image dimensions with sharp (optional)
-      let width, height
-      try {
-        const sharp = (await import('sharp')).default
-        const meta = await sharp(filepath).metadata()
-        width = meta.width
-        height = meta.height
+      // Upload to Cloudinary
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          {
+            folder: 'cakeshop',
+            transformation: [{ quality: 'auto:best', fetch_format: 'auto' }],
+          },
+          (error, result) => {
+            if (error) reject(error)
+            else resolve(result)
+          }
+        ).end(buffer)
+      })
 
-        // Generate thumbnail
-        const thumbName = `thumb_${filename}`
-        const thumbPath = path.join(UPLOADS_DIR, thumbName)
-        await sharp(filepath)
-        .resize(400, 400, { fit: 'cover' })
-        .jpeg({ quality: 95, progressive: true })
-        .toFile(thumbPath)
-      } catch { /* sharp optional */ }
-
-      const url = `/uploads/${filename}`
-      const thumbUrl = width ? `/uploads/thumb_${filename}` : url
+      // Thumbnail URL from Cloudinary (auto-generated)
+      const thumbUrl = cloudinary.url(result.public_id, {
+        width: 400, height: 400, crop: 'fill', quality: 'auto'
+      })
 
       const isPrimary = existing === 0 && uploaded.length === 0
       const order = existing + uploaded.length
@@ -268,7 +259,7 @@ export default async function adminRoutes(fastify) {
         INSERT INTO cake_images (cake_id, url, thumbnail_url, alt_text, display_order, is_primary, file_size, width, height)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         RETURNING *
-      `, [cakeId, url, thumbUrl, part.filename, order, isPrimary, buffer.length, width || null, height || null])
+      `, [cakeId, result.secure_url, thumbUrl, part.filename, order, isPrimary, buffer.length, result.width, result.height])
 
       uploaded.push(rows[0])
     }
