@@ -20,9 +20,10 @@ export const useAuthStore = create<AuthState>()(
         set({ user, token })
       },
       logout: () => {
-        localStorage.removeItem('cs_token')
-        set({ user: null, token: null })
-      },
+          localStorage.removeItem('cs_token')
+          localStorage.removeItem('cs_session')
+          set({ user: null, token: null })
+        },
       updateUser: (user) => set({ user }),
     }),
     { name: 'cs_auth', partialize: (s) => ({ user: s.user, token: s.token }) }

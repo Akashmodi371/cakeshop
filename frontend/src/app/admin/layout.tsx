@@ -101,42 +101,48 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
 
-      {/* ── Mobile overlay ── */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-40 md:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setSidebarOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-64 bg-white shadow-xl z-50">
-            <SidebarContent />
-          </aside>
-        </div>
-      )}
-
-      {/* ── Desktop sidebar ── */}
-      <aside className="hidden md:flex w-60 bg-white border-r border-gray-100 flex-col flex-shrink-0">
+  {/* ── Mobile overlay ── */}
+  {sidebarOpen && (
+    <div className="fixed inset-0 z-[100] md:hidden">
+      <div
+        className="absolute inset-0 bg-black/50"
+        onClick={() => setSidebarOpen(false)}
+      />
+      <aside className="absolute left-0 top-0 bottom-0 w-64 bg-white shadow-2xl z-[101] flex flex-col">
         <SidebarContent />
       </aside>
+    </div>
+  )}
 
-      {/* ── Main content ── */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Mobile top bar */}
-        <div className="md:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-100">
-          <button onClick={() => setSidebarOpen(true)}
-            className="btn-icon w-9 h-9 rounded-xl border border-gray-200">
-            <Menu className="w-4 h-4" />
-          </button>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center">
-              <ShieldCheck className="w-3 h-3 text-white" />
-            </div>
-            <span className="font-semibold text-gray-900 text-sm">Admin Portal</span>
-          </div>
+  {/* ── Desktop sidebar ── */}
+  <aside className="hidden md:flex md:w-60 bg-white border-r border-gray-100 flex-col flex-shrink-0">
+    <SidebarContent />
+  </aside>
+
+  {/* ── Main content ── */}
+  <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+    {/* Mobile top bar */}
+    <div className="md:hidden flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-100 flex-shrink-0">
+      <button
+        onClick={() => setSidebarOpen(true)}
+        className="btn-icon w-9 h-9 rounded-xl border border-gray-200 flex-shrink-0"
+      >
+        <Menu className="w-4 h-4" />
+      </button>
+      <div className="flex items-center gap-2 min-w-0">
+        <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center flex-shrink-0">
+          <ShieldCheck className="w-3 h-3 text-white" />
         </div>
-
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto">
-          {children}
-        </main>
+        <span className="font-semibold text-gray-900 text-sm truncate">Admin Portal</span>
       </div>
     </div>
+
+    {/* Page content */}
+    <main className="flex-1 overflow-y-auto">
+      {children}
+    </main>
+  </div>
+
+</div>
   )
 }

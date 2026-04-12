@@ -3,32 +3,53 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Cake, Eye, EyeOff } from 'lucide-react'
-import { authApi } from '@/lib/api'
-import { useAuthStore } from '@/store'
+import { useAuthStore, useCartStore } from '@/store'
+import { authApi, cartApi } from '@/lib/api'
+
 import toast from 'react-hot-toast'
 
 export default function LoginPage() {
   const router = useRouter()
   const { setAuth } = useAuthStore()
+  const { setCart } = useCartStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setError('')
+  setLoading(true)
+  try {
+    // Get guest cart before login
+    let guestItems: any[] = []
     try {
-      const { token, user } = await authApi.login(email, password)
-      setAuth(user, token)
-      toast.success(`Welcome back, ${user.name?.split(' ')[0]}! 🎂`)
-      router.push(user.role === 'admin' ? '/admin' : '/')
-    } catch (err: any) {
-      setError(err.message)
-    } finally { setLoading(false) }
-  }
+      const guestCart = await cartApi.get()
+      guestItems = guestCart.items || []
+    } catch { }
+
+    const { token, user } = await authApi.login(email, password)
+    setAuth(user, token)
+
+    // Merge guest cart into user cart after login
+    if (guestItems.length > 0) {
+      try {
+        for (const item of guestItems) {
+          await cartApi.add(item.cake_id, item.quantity)
+        }
+        const newCart = await cartApi.get()
+        setCart(newCart.items, newCart.total)
+      } catch { }
+    }
+
+    toast.success(`Welcome back, ${user.name?.split(' ')[0]}! 🎂`)
+    router.push(user.role === 'admin' ? '/admin' : '/')
+  } catch (err: any) {
+    setError(err.message)
+  } finally { setLoading(false) }
+}
 
   return (
     <div className="min-h-[calc(100vh-200px)] flex items-center justify-center p-4 bg-pattern">

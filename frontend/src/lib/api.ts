@@ -77,7 +77,7 @@ export const cartApi = {
 // Wishlist
 export const wishlistApi = {
   get: () => api.get<any[]>('/api/wishlist'),
-  toggle: (cakeId: string) => api.post<{ saved: boolean }>(`/api/wishlist/${cakeId}`),
+  toggle: (cakeId: string) => api.post<{ saved: boolean }>(`/api/wishlist/${cakeId}`, {}),
   remove: (cakeId: string) => api.delete(`/api/wishlist/${cakeId}`),
 }
 
