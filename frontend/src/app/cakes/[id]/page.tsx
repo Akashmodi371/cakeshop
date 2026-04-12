@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useParams, notFound } from 'next/navigation'
-import { Star, ShoppingCart, Heart, Phone, Share2, Flag, ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react'
+import { Star, ShoppingCart, Heart, Phone, Share2, Flag, ChevronLeft, ChevronRight, CheckCircle, X } from 'lucide-react'
 import Link from 'next/link'
 import { cakesApi, cartApi, wishlistApi, imgUrl } from '@/lib/api'
 import { useAuthStore, useCartStore, useWishlistStore } from '@/store'
