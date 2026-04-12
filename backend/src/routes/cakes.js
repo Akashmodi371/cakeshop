@@ -3,7 +3,10 @@ import { optionalAuth, authenticate } from '../middleware/auth.js'
 
 const CAKE_SELECT = `
   c.id, c.name, c.slug, c.short_description, c.price, c.original_price,
-  c.weight, c.servings, c.flavours, c.allergens, c.ingredients,
+  c.weight, c.servings,
+  COALESCE(c.flavours, '{}') as flavours,
+  COALESCE(c.allergens, '{}') as allergens,
+  COALESCE(c.ingredients, '{}') as ingredients,
   c.customization_options, c.is_featured, c.is_bestseller, c.is_new,
   c.is_available, c.is_pinned, c.stock_count, c.prep_time_hours,
   c.rating, c.review_count, c.tags, c.rich_content, c.description,
