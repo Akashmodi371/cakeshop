@@ -170,10 +170,11 @@ export default function CakeDetailPage() {
                       activeImage === i ? 'ring-2 ring-brand-400 ring-offset-2' : 'opacity-60 hover:opacity-100'
                     )}>
                     <img
-                      src={imgUrl(img.thumbnail_url || img.url)}
-                      alt=""
+                      src={imgUrl(images[activeImage]?.url || '')}
+                      alt={images[activeImage]?.alt_text || cake.name}
                       className="w-full h-full object-cover"
-                      onError={e => { (e.target as any).src = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200' }}
+                      decoding="async"
+                      onError={e => { (e.target as any).src = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=700' }}
                     />
                   </button>
                 ))}

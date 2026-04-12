@@ -252,7 +252,10 @@ export default async function adminRoutes(fastify) {
         // Generate thumbnail
         const thumbName = `thumb_${filename}`
         const thumbPath = path.join(UPLOADS_DIR, thumbName)
-        await sharp(filepath).resize(400, 400, { fit: 'cover' }).toFile(thumbPath)
+        await sharp(filepath)
+        .resize(400, 400, { fit: 'cover' })
+        .jpeg({ quality: 95, progressive: true })
+        .toFile(thumbPath)
       } catch { /* sharp optional */ }
 
       const url = `/uploads/${filename}`

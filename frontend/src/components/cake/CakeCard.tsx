@@ -62,8 +62,9 @@ export default function CakeCard({ cake, onWishlistToggle }: Props) {
           src={imgUrl(primaryImage)}
           alt={cake.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          onError={e => { (e.target as any).src = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500' }}
           loading="lazy"
+          decoding="async"
+          onError={e => { (e.target as any).src = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500' }}
         />
 
         {/* Badges */}
