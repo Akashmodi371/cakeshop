@@ -2,10 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import {
-  LayoutDashboard, Cake, Tag, Megaphone, Flag,
-  Settings, Users, LogOut, ChevronRight, ShieldCheck, Menu, X
-} from 'lucide-react'
+import { LayoutDashboard, Cake, Tag, Megaphone, Flag, Settings, Users, LogOut, ChevronRight, ShieldCheck, Menu, X, Package } from 'lucide-react'
 import { useAuthStore } from '@/store'
 import clsx from 'clsx'
 
@@ -17,6 +14,7 @@ const NAV = [
   { href: '/admin/reports', label: 'Reports', icon: Flag },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
+  { href: '/admin/orders', label: 'Orders', icon: Package },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

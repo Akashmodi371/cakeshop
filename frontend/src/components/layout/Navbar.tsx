@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ShoppingCart, Heart, User, Search, Menu, X, Phone } from 'lucide-react'
+import { ShoppingCart, Heart, User, Search, Menu, X, Phone, Cake, Package } from 'lucide-react'
 import { useAuthStore, useCartStore } from '@/store'
 import { cartApi } from '@/lib/api'
 import clsx from 'clsx'
@@ -138,6 +138,10 @@ export default function Navbar() {
                         <Link href="/profile" onClick={() => setUserMenuOpen(false)}
                           className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-brand-50 transition-colors">
                           <User className="w-4 h-4" /> My Profile
+                        </Link>
+                        <Link href="/orders" onClick={() => setUserMenuOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-brand-50 transition-colors">
+                          <Package className="w-4 h-4" /> My Orders
                         </Link>
                         <Link href="/wishlist" onClick={() => setUserMenuOpen(false)}
                           className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-brand-50 transition-colors">

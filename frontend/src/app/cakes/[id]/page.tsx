@@ -8,11 +8,13 @@ import { useAuthStore, useCartStore, useWishlistStore } from '@/store'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 import DeliveryDatePicker from '@/components/cake/DeliveryDatePicker'
+import OrderModal from './OrderModal'
 
 export default function CakeDetailPage() {
   const { id: slug } = useParams()
   const { user } = useAuthStore()
   const { openCart, setCart } = useCartStore()
+  const [showOrder, setShowOrder] = useState(false)
   const { has, toggle } = useWishlistStore()
 
   const [cake, setCake] = useState<any>(null)
@@ -402,6 +404,12 @@ export default function CakeDetailPage() {
                     {adding ? <span className="spinner" /> : <ShoppingCart className="w-4 h-4" />}
                     {adding ? 'Adding...' : 'Add to Cart'}
                   </button>
+                  <button
+                    onClick={() => user ? setShowOrder(true) : toast.error('Please login to place order')}
+                    className="btn-sky w-full justify-center gap-2 py-3.5"
+                  >
+                    📋 Book This Cake
+                  </button>
                   <DeliveryDatePicker prepHours={cake.prep_time_hours || 24} />
                   <button onClick={handleWishlist}
                     className={clsx('btn-icon w-12 h-12 rounded-xl border transition-all',
@@ -595,6 +603,11 @@ export default function CakeDetailPage() {
           startIndex={activeImage}
           onClose={() => setLightboxOpen(false)}
         />
+      )}
+
+      {/* Order Modal */}
+      {showOrder && (
+        <OrderModal cake={cake} onClose={() => setShowOrder(false)} />
       )}
 
     </div>

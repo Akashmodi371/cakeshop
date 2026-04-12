@@ -65,6 +65,21 @@ export const authApi = {
     api.post('/api/auth/change-password', { currentPassword, newPassword }),
 }
 
+export const ordersApi = {
+  place: (body: any) => api.post<any>('/api/orders', body),
+  myOrders: () => api.get<any[]>('/api/orders/my'),
+  getOrder: (id: string) => api.get<any>(`/api/orders/${id}`),
+  adminAll: (params?: any) => {
+    const q = params ? '?' + new URLSearchParams(params).toString() : ''
+    return api.get<any>(`/api/orders/admin/all${q}`)
+  },
+  updateStatus: (id: string, status: string, note?: string) =>
+    api.patch(`/api/orders/admin/${id}/status`, { status, note }),
+  confirmPayment: (id: string) =>
+    api.patch(`/api/orders/admin/${id}/confirm-payment`, {}),
+}
+
+
 // Cart
 export const cartApi = {
   get: () => api.get<any>('/api/cart'),

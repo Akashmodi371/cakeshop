@@ -2,6 +2,7 @@ import 'dotenv/config'
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import jwt from '@fastify/jwt'
+import orderRoutes from './routes/orders.js'
 import multipart from '@fastify/multipart'
 import staticFiles from '@fastify/static'
 import path from 'path'
@@ -60,6 +61,7 @@ await fastify.register(cakeRoutes, { prefix: '/api/cakes' })
 await fastify.register(cartRoutes, { prefix: '/api/cart' })
 await fastify.register(wishlistRoutes, { prefix: '/api/wishlist' })
 await fastify.register(adminRoutes, { prefix: '/api/admin' })
+await fastify.register(orderRoutes, { prefix: '/api/orders' })
 
 // Health check
 fastify.get('/health', async () => ({

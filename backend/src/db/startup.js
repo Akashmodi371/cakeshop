@@ -229,6 +229,52 @@ export async function runStartup() {
       `, [rows[0].id, name])
     }
   }
+ console.log('✅ Cakes seeded.')
 
-  console.log('✅ Cakes seeded.')
+
+ await pool.query(`
+  CREATE TABLE IF NOT EXISTS orders (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    order_number VARCHAR(20) UNIQUE NOT NULL,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    cake_id UUID NOT NULL REFERENCES cakes(id) ON DELETE CASCADE,
+    quantity INTEGER NOT NULL DEFAULT 1,
+    cake_name VARCHAR(200) NOT NULL,
+    cake_price DECIMAL(10,2) NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL,
+    advance_amount DECIMAL(10,2) NOT NULL,
+    delivery_date DATE,
+    delivery_time VARCHAR(50),
+    delivery_address TEXT,
+    special_instructions TEXT,
+    status VARCHAR(30) DEFAULT 'pending_payment'
+      CHECK (status IN (
+        'pending_payment',
+        'payment_received',
+        'confirmed',
+        'baking',
+        'out_for_delivery',
+        'delivered',
+        'cancelled'
+      )),
+    payment_method VARCHAR(30) DEFAULT 'call',
+    payment_proof_url TEXT,
+    admin_notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+  );
+
+  CREATE TABLE IF NOT EXISTS order_status_history (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    status VARCHAR(30) NOT NULL,
+    note TEXT,
+    updated_by UUID REFERENCES users(id),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
+  CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+`)
+console.log('✅ Orders tables ready.')
 }
