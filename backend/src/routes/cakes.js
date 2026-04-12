@@ -126,11 +126,17 @@ export default async function cakeRoutes(fastify) {
   fastify.get('/:slug', { preHandler: [optionalAuth] }, async (request, reply) => {
     const { rows } = await query(`
       SELECT ${CAKE_SELECT},
-        (SELECT json_agg(
-          json_build_object('id', r.id, 'rating', r.rating, 'title', r.title, 'body', r.body,
-            'created_at', r.created_at, 'user_name', u.name)
-          ORDER BY r.created_at DESC LIMIT 10
-        ) FROM reviews r JOIN users u ON r.user_id = u.id WHERE r.cake_id = c.id) AS recent_reviews
+        (SELECT json_agg(rev_data)
+        FROM (
+          SELECT json_build_object('id', r.id, 'rating', r.rating, 'title', r.title, 'body', r.body,
+            'created_at', r.created_at, 'user_name', u.name) AS rev_data
+          FROM reviews r
+          JOIN users u ON r.user_id = u.id
+          WHERE r.cake_id = c.id
+          ORDER BY r.created_at DESC
+          LIMIT 10
+        ) sub
+        ) AS recent_reviews
       ${CAKE_FROM}
       WHERE c.slug = $1
       GROUP BY c.id, cat.id
