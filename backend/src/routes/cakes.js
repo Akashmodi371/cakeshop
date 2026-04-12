@@ -4,9 +4,9 @@ import { optionalAuth, authenticate } from '../middleware/auth.js'
 const CAKE_SELECT = `
   c.id, c.name, c.slug, c.short_description, c.price, c.original_price,
   c.weight, c.servings,
-  COALESCE(c.flavours, '{}') as flavours,
-  COALESCE(c.allergens, '{}') as allergens,
-  COALESCE(c.ingredients, '{}') as ingredients,
+  COALESCE(c.flavours, ARRAY[]::text[]) as flavours,
+  COALESCE(c.allergens, ARRAY[]::text[]) as allergens,
+  COALESCE(c.ingredients, ARRAY[]::text[]) as ingredients,
   c.customization_options, c.is_featured, c.is_bestseller, c.is_new,
   c.is_available, c.is_pinned, c.stock_count, c.prep_time_hours,
   c.rating, c.review_count, c.tags, c.rich_content, c.description,
@@ -28,7 +28,35 @@ const CAKE_FROM = `
 `
 
 export default async function cakeRoutes(fastify) {
-  // List cakes with filters
+
+  // ── IMPORTANT: Static routes BEFORE /:slug ──────────────────────
+
+  // Get categories
+  fastify.get('/meta/categories', async (request, reply) => {
+    const { rows } = await query(`
+      SELECT cat.*, COUNT(c.id) FILTER (WHERE c.is_available = true) AS cake_count
+      FROM categories cat
+      LEFT JOIN cakes c ON c.category_id = cat.id
+      WHERE cat.is_active = true
+      GROUP BY cat.id
+      ORDER BY cat.display_order
+    `)
+    reply.send(rows)
+  })
+
+  // Get promotions/banners
+  fastify.get('/meta/promotions', async (request, reply) => {
+    const { rows } = await query(`
+      SELECT * FROM promotions
+      WHERE is_active = true
+        AND (starts_at IS NULL OR starts_at <= NOW())
+        AND (ends_at IS NULL OR ends_at >= NOW())
+      ORDER BY section, display_order
+    `)
+    reply.send(rows)
+  })
+
+  // ── List cakes ───────────────────────────────────────────────────
   fastify.get('/', { preHandler: [optionalAuth] }, async (request, reply) => {
     const {
       page = 1, limit = 12, category, featured, bestseller,
@@ -41,20 +69,14 @@ export default async function cakeRoutes(fastify) {
     const params = []
     let p = 1
 
-    if (category) {
-      conditions.push(`cat.slug = $${p++}`)
-      params.push(category)
-    }
+    if (category) { conditions.push(`cat.slug = $${p++}`); params.push(category) }
     if (featured === 'true') { conditions.push('c.is_featured = true') }
     if (bestseller === 'true') { conditions.push('c.is_bestseller = true') }
     if (isNew === 'true') { conditions.push('c.is_new = true') }
     if (pinned === 'true') { conditions.push('c.is_pinned = true') }
     if (minPrice) { conditions.push(`c.price >= $${p++}`); params.push(minPrice) }
     if (maxPrice) { conditions.push(`c.price <= $${p++}`); params.push(maxPrice) }
-    if (tags) {
-      conditions.push(`c.tags && $${p++}`)
-      params.push(tags.split(','))
-    }
+    if (tags) { conditions.push(`c.tags && $${p++}`); params.push(tags.split(',')) }
     if (search) {
       conditions.push(`(
         to_tsvector('english', c.name || ' ' || COALESCE(c.short_description,'')) @@ plainto_tsquery('english', $${p})
@@ -65,7 +87,6 @@ export default async function cakeRoutes(fastify) {
     }
 
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : ''
-
     const sortMap = {
       pinned: 'c.is_pinned DESC, c.is_featured DESC, c.rating DESC',
       price_asc: 'c.price ASC',
@@ -101,7 +122,7 @@ export default async function cakeRoutes(fastify) {
     })
   })
 
-  // Get single cake by slug
+  // ── Get single cake by slug ───────────────────────────────────────
   fastify.get('/:slug', { preHandler: [optionalAuth] }, async (request, reply) => {
     const { rows } = await query(`
       SELECT ${CAKE_SELECT},
@@ -117,7 +138,6 @@ export default async function cakeRoutes(fastify) {
 
     if (rows.length === 0) return reply.code(404).send({ error: 'Cake not found' })
 
-    // Check if user has this in wishlist
     let inWishlist = false
     if (request.user) {
       const wl = await query(
@@ -130,32 +150,7 @@ export default async function cakeRoutes(fastify) {
     reply.send({ ...rows[0], in_wishlist: inWishlist })
   })
 
-  // Get categories
-  fastify.get('/meta/categories', async (request, reply) => {
-    const { rows } = await query(`
-      SELECT cat.*, COUNT(c.id) FILTER (WHERE c.is_available = true) AS cake_count
-      FROM categories cat
-      LEFT JOIN cakes c ON c.category_id = cat.id
-      WHERE cat.is_active = true
-      GROUP BY cat.id
-      ORDER BY cat.display_order
-    `)
-    reply.send(rows)
-  })
-
-  // Get promotions/banners
-  fastify.get('/meta/promotions', async (request, reply) => {
-    const { rows } = await query(`
-      SELECT * FROM promotions
-      WHERE is_active = true
-        AND (starts_at IS NULL OR starts_at <= NOW())
-        AND (ends_at IS NULL OR ends_at >= NOW())
-      ORDER BY section, display_order
-    `)
-    reply.send(rows)
-  })
-
-  // Report a cake
+  // ── Report a cake ─────────────────────────────────────────────────
   fastify.post('/:id/report', { preHandler: [authenticate] }, async (request, reply) => {
     const { reason, description } = request.body
     await query(`
@@ -165,7 +160,7 @@ export default async function cakeRoutes(fastify) {
     reply.code(201).send({ message: 'Report submitted successfully' })
   })
 
-  // Add review
+  // ── Add review ────────────────────────────────────────────────────
   fastify.post('/:id/review', { preHandler: [authenticate] }, async (request, reply) => {
     const { rating, title, body } = request.body
     await query(`
@@ -174,7 +169,6 @@ export default async function cakeRoutes(fastify) {
       ON CONFLICT (cake_id, user_id) DO UPDATE SET rating=$3, title=$4, body=$5
     `, [request.params.id, request.user.id, rating, title, body])
 
-    // Update cake average rating
     await query(`
       UPDATE cakes SET
         rating = (SELECT ROUND(AVG(rating)::numeric, 2) FROM reviews WHERE cake_id = $1),
