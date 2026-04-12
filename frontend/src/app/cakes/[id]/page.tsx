@@ -18,6 +18,7 @@ export default function CakeDetailPage() {
   const [cake, setCake] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [activeImage, setActiveImage] = useState(0)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
   const [qty, setQty] = useState(1)
   const [adding, setAdding] = useState(false)
   const [showReport, setShowReport] = useState(false)
@@ -30,6 +31,105 @@ export default function CakeDetailPage() {
   const [submitting, setSubmitting] = useState(false)
 
   const phone = process.env.NEXT_PUBLIC_SHOP_PHONE || '+91-9876543210'
+
+
+
+  function ImageLightbox({ images, startIndex, onClose }: { images: any[], startIndex: number, onClose: () => void }) {
+  const [current, setCurrent] = useState(startIndex)
+  const [zoom, setZoom] = useState(1)
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowRight') setCurrent(p => (p + 1) % images.length)
+      if (e.key === 'ArrowLeft') setCurrent(p => (p - 1 + images.length) % images.length)
+    }
+    window.addEventListener('keydown', handler)
+    return () => { window.removeEventListener('keydown', handler); document.body.style.overflow = '' }
+  }, [])
+
+  useEffect(() => { setZoom(1) }, [current])
+
+  return (
+    <div className="fixed inset-0 z-[200] bg-black/95 flex flex-col">
+      {/* Top bar */}
+      <div className="flex items-center justify-between px-4 py-3 flex-shrink-0">
+        <span className="text-white/60 text-sm">{current + 1} / {images.length}</span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setZoom(p => Math.min(3, parseFloat((p + 0.5).toFixed(1))))}
+            className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors text-lg font-bold"
+          >+</button>
+          <span className="text-white/60 text-xs w-10 text-center">{Math.round(zoom * 100)}%</span>
+          <button
+            onClick={() => setZoom(p => Math.max(1, parseFloat((p - 0.5).toFixed(1))))}
+            className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors text-lg font-bold"
+          >−</button>
+          <button
+            onClick={onClose}
+            className="w-9 h-9 rounded-full bg-white/10 hover:bg-red-500 text-white flex items-center justify-center transition-colors ml-2"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Main image */}
+      <div className="flex-1 overflow-auto flex items-center justify-center relative">
+        {images.length > 1 && (
+          <button
+            onClick={() => setCurrent(p => (p - 1 + images.length) % images.length)}
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+        )}
+
+        <img
+          src={imgUrl(images[current]?.url || '')}
+          alt=""
+          style={{ transform: `scale(${zoom})`, transition: 'transform 0.2s ease', cursor: zoom > 1 ? 'zoom-out' : 'zoom-in' }}
+          onClick={() => setZoom(p => p > 1 ? 1 : 2)}
+          className="max-h-[80vh] max-w-[90vw] object-contain select-none"
+          onError={e => { (e.target as any).src = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800' }}
+        />
+
+        {images.length > 1 && (
+          <button
+            onClick={() => setCurrent(p => (p + 1) % images.length)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center transition-colors"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        )}
+      </div>
+
+      {/* Thumbnail strip */}
+      {images.length > 1 && (
+        <div className="flex items-center justify-center gap-2 px-4 py-3 flex-shrink-0">
+          {images.map((img: any, i: number) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              className={'w-12 h-12 rounded-lg overflow-hidden transition-all flex-shrink-0 ' +
+                (i === current ? 'ring-2 ring-brand-400 ring-offset-2 ring-offset-black opacity-100' : 'opacity-50 hover:opacity-80')}
+            >
+              <img
+                src={imgUrl(img.thumbnail_url || img.url)}
+                alt=""
+                className="w-full h-full object-cover"
+              />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+
+
 
   useEffect(() => {
     if (!slug) return
@@ -138,6 +238,17 @@ export default function CakeDetailPage() {
                 className="w-full h-full object-cover"
                 onError={e => { (e.target as any).src = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=700' }}
               />
+
+              {/* Fullscreen button */}
+              <button
+                onClick={() => setLightboxOpen(true)}
+                className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-colors backdrop-blur-sm"
+                title="View fullscreen"
+              >
+                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-current stroke-2">
+                  <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
 
               {/* Nav arrows */}
               {images.length > 1 && <>
@@ -476,6 +587,16 @@ export default function CakeDetailPage() {
           </div>
         </div>
       )}
+
+      {/* Lightbox */}
+      {lightboxOpen && (
+        <ImageLightbox
+          images={images}
+          startIndex={activeImage}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
+
     </div>
   )
 }
