@@ -3,9 +3,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Cake, Eye, EyeOff } from 'lucide-react'
-import { getFirebaseAuth } from '@/lib/firebase'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { authApi } from '@/lib/api'
+import { authApi, cartApi } from '@/lib/api'
 import { useAuthStore, useCartStore } from '@/store'
 import toast from 'react-hot-toast'
 
@@ -24,29 +22,16 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
     try {
-      // Firebase login
-      const auth = getFirebaseAuth()
-      if (!auth) return
-      const cred = await signInWithEmailAndPassword(auth, email, password)
-      const firebaseToken = await cred.user.getIdToken()
-
-      // Sync with our backend
-      const { token, user } = await authApi.firebaseSync(firebaseToken)
+      const { token, user } = await authApi.login(email, password)
       setAuth(user, token)
-
-      // Merge cart
       try {
-        const cart = await import('@/lib/api').then(m => m.cartApi.get())
+        const cart = await cartApi.get()
         setCart(cart.items, cart.total)
       } catch { }
-
-      toast.success('Welcome back, ' + user.name?.split(' ')[0] + '! 🎂')
+      toast.success('Welcome back ' + user.name?.split(' ')[0] + '! 🎂')
       router.push(user.role === 'admin' ? '/admin' : '/')
     } catch (err: any) {
-      const msg = err.code === 'auth/invalid-credential' ? 'Invalid email or password'
-        : err.code === 'auth/user-not-found' ? 'No account found'
-        : err.message
-      setError(msg)
+      setError(err.message)
     } finally { setLoading(false) }
   }
 
@@ -61,7 +46,6 @@ export default function LoginPage() {
             <h1 className="font-display text-2xl font-semibold text-gray-900">Welcome Back</h1>
             <p className="text-gray-400 text-sm mt-1">Sign in to Agrawal Cake House</p>
           </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="label">Email</label>
@@ -80,16 +64,13 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
-
             {error && (
               <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl p-3">{error}</div>
             )}
-
             <button type="submit" disabled={loading} className="btn-primary w-full py-3.5">
               {loading ? <span className="spinner" /> : 'Sign In'}
             </button>
           </form>
-
           <p className="text-center text-sm text-gray-500 mt-6">
             Don&apos;t have an account?{' '}
             <Link href="/auth/register" className="text-brand-500 font-medium hover:underline">Create one</Link>

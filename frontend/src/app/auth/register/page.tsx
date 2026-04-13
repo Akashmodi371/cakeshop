@@ -3,8 +3,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Cake, Eye, EyeOff } from 'lucide-react'
-import { getFirebaseAuth } from '@/lib/firebase'
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { authApi } from '@/lib/api'
 import { useAuthStore } from '@/store'
 import toast from 'react-hot-toast'
@@ -25,24 +23,12 @@ export default function RegisterPage() {
     setError('')
     setLoading(true)
     try {
-      // Create Firebase user
-      const auth = getFirebaseAuth()
-      if (!auth) return
-      const cred = await createUserWithEmailAndPassword(auth, form.email, form.password)
-      await updateProfile(cred.user, { displayName: form.name })
-      const firebaseToken = await cred.user.getIdToken()
-
-      // Sync with backend
-      const { token, user } = await authApi.firebaseSync(firebaseToken, form.name, form.phone)
+      const { token, user } = await authApi.register(form)
       setAuth(user, token)
-
-      toast.success('Welcome, ' + form.name.split(' ')[0] + '! 🎂')
+      toast.success('Welcome ' + form.name.split(' ')[0] + '! 🎂')
       router.push('/')
     } catch (err: any) {
-      const msg = err.code === 'auth/email-already-in-use' ? 'Email already registered'
-        : err.code === 'auth/weak-password' ? 'Password too weak'
-        : err.message
-      setError(msg)
+      setError(err.message)
     } finally { setLoading(false) }
   }
 
@@ -57,7 +43,6 @@ export default function RegisterPage() {
             <h1 className="font-display text-2xl font-semibold text-gray-900">Create Account</h1>
             <p className="text-gray-400 text-sm mt-1">Join Agrawal Cake House</p>
           </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             {[
               { key: 'name', label: 'Full Name', type: 'text', placeholder: 'Your name' },
@@ -83,16 +68,13 @@ export default function RegisterPage() {
                 </button>
               </div>
             </div>
-
             {error && (
               <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl p-3">{error}</div>
             )}
-
             <button type="submit" disabled={loading} className="btn-primary w-full py-3.5">
               {loading ? <span className="spinner" /> : 'Create Account'}
             </button>
           </form>
-
           <p className="text-center text-sm text-gray-500 mt-6">
             Already have an account?{' '}
             <Link href="/auth/login" className="text-brand-500 font-medium hover:underline">Sign in</Link>
