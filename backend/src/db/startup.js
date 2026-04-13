@@ -160,7 +160,7 @@ export async function runStartup() {
 
   // Seed admin user
   const bcrypt = (await import('bcryptjs')).default
-  const adminHash = await bcrypt.hash('AgrawalAdmin@2024', 12)
+  const adminHash = await bcrypt.hash('Admin@123', 12)
   await pool.query(`
     INSERT INTO users (name, email, password_hash, role, is_verified)
     VALUES ('Agrawal Admin', 'admin@agrawalcakehouse.com', $1, 'admin', true)
@@ -191,14 +191,14 @@ export async function runStartup() {
   }
 
   // Seed promotions
-  await pool.query(`
-    INSERT INTO promotions (title, subtitle, badge_text, button_text, button_url, section, display_order, is_active)
-    VALUES 
-    ('🎂 Free delivery above ₹500 | Same day delivery available', null, null, 'Order Now', '/cakes', 'announcement', 1, true),
-      ('Celebrate Every Moment', 'Handcrafted cakes made with love — delivered fresh to your door', 'Free Delivery Above ₹500', 'Shop Now', '/cakes', 'hero', 1, true),
-      ('20% Off on Wedding Cakes', 'Book your dream wedding cake this month', 'Limited Offer', 'Explore', '/cakes?category=wedding', 'featured', 1, true)
-    ON CONFLICT DO NOTHING
-  `)
+  // await pool.query(`
+  //   INSERT INTO promotions (title, subtitle, badge_text, button_text, button_url, section, display_order, is_active)
+  //   VALUES 
+  //   ('🎂 Free delivery above ₹500 | Same day delivery available', null, null, 'Order Now', '/cakes', 'announcement', 1, true),
+  //     ('Celebrate Every Moment', 'Handcrafted cakes made with love — delivered fresh to your door', 'Free Delivery Above ₹500', 'Shop Now', '/cakes', 'hero', 1, true),
+  //     ('20% Off on Wedding Cakes', 'Book your dream wedding cake this month', 'Limited Offer', 'Explore', '/cakes?category=wedding', 'featured', 1, true)
+  //   ON CONFLICT DO NOTHING
+  // `)
 
 
 //   // Seed cakes

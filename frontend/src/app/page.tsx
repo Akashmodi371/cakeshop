@@ -2,15 +2,16 @@ import Link from 'next/link'
 import { Phone, Star, ChevronRight, Sparkles, Clock, Award, Truck } from 'lucide-react'
 import CakeGrid from '@/components/cake/CakeGrid'
 import { cakesApi } from '@/lib/api'
+export const revalidate = 60
 
 async function getData() {
   try {
     const [featured, bestsellers, newArrivals, categories, promotions] = await Promise.all([
-      cakesApi.list({ featured: 'true', limit: 8 }),
-      cakesApi.list({ bestseller: 'true', limit: 4 }),
-      cakesApi.list({ new: 'true', limit: 4 }),
-      cakesApi.categories(),
-      cakesApi.promotions(),
+      fetch(process.env.NEXT_PUBLIC_API_URL + '/api/cakes?featured=true&limit=8', { cache: 'no-store' }).then(r => r.json()),
+      fetch(process.env.NEXT_PUBLIC_API_URL + '/api/cakes?bestseller=true&limit=4', { cache: 'no-store' }).then(r => r.json()),
+      fetch(process.env.NEXT_PUBLIC_API_URL + '/api/cakes?new=true&limit=4', { cache: 'no-store' }).then(r => r.json()),
+      fetch(process.env.NEXT_PUBLIC_API_URL + '/api/cakes/meta/categories', { cache: 'no-store' }).then(r => r.json()),
+      fetch(process.env.NEXT_PUBLIC_API_URL + '/api/cakes/meta/promotions', { cache: 'no-store' }).then(r => r.json()),
     ])
     return { featured, bestsellers, newArrivals, categories, promotions }
   } catch {

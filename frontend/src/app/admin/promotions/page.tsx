@@ -33,13 +33,16 @@ export default function AdminPromotionsPage() {
   }
 
   const handleUpdate = async () => {
-    setSaving(true)
-    try {
-      await adminApi.updatePromotion(editing.id, editing)
-      toast.success('Updated!'); setEditing(null); load()
-    } catch (err: any) { toast.error(err.message) }
-    finally { setSaving(false) }
-  }
+  setSaving(true)
+  try {
+    await adminApi.updatePromotion(editing.id, {
+      ...editing,
+      display_order: parseInt(editing.display_order) || 0
+    })
+    toast.success('Updated!'); setEditing(null); load()
+  } catch (err: any) { toast.error(err.message) }
+  finally { setSaving(false) }
+}
 
   const handleToggle = async (id: string, is_active: boolean) => {
     try {
@@ -76,6 +79,7 @@ export default function AdminPromotionsPage() {
             <option value="featured">Featured Banner</option>
             <option value="banner">Mid-page Banner</option>
             <option value="announcement">Announcement Bar</option>
+             <option value="popup">Popup</option>
           </select>
         </div>
         <div>
@@ -136,7 +140,7 @@ export default function AdminPromotionsPage() {
                 <PromoForm
                   data={editing}
                   onChange={(k: string, v: any) => setEditing((p: any) => ({ ...p, [k]: v }))}
-                  onSubmit={(e: any) => { e.preventDefault(); handleUpdate() }}
+                  onSubmit={async (e: any) => { e.preventDefault(); await handleUpdate() }}
                   onCancel={() => setEditing(null)}
                   label="Save" />
               </div>
