@@ -268,3 +268,33 @@ h1, h2, h3 { font-family: var(--font-display); }
 .react-hot-toast > div {
   font-family: var(--font-body) !important;
 }
+
+
+/* ─── Dark Mode ─────────────────────────────────────────────── */
+.dark body {
+  background: #0f0f1a;
+  color: #f0f0f5;
+}
+.dark .bg-white { background: #1a1a2e !important; }
+.dark .bg-pattern { 
+  background-color: #0f0f1a;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(247, 47, 122, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.06) 0%, transparent 50%);
+}
+.dark .text-gray-900 { color: #f0f0f5 !important; }
+.dark .text-gray-800 { color: #e0e0eb !important; }
+.dark .text-gray-700 { color: #c8c8d8 !important; }
+.dark .text-gray-600 { color: #a0a0b8 !important; }
+.dark .text-gray-500 { color: #8888a0 !important; }
+.dark .text-gray-400 { color: #6668 !important; }
+.dark .border-gray-100 { border-color: #2a2a3e !important; }
+.dark .border-gray-200 { border-color: #2a2a3e !important; }
+.dark .border-pink-100 { border-color: #2a1a2e !important; }
+.dark .bg-gray-50 { background: #16162a !important; }
+.dark .bg-gray-100 { background: #1e1e32 !important; }
+.dark .bg-brand-50 { background: #1f0f1f !important; }
+.dark .bg-sky-50 { background: #0a1525 !important; }
+.dark .shadow-card { box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 16px rgba(0,0,0,0.4) !important; }
+.dark nav { background: rgba(15, 15, 26, 0.95) !important; }
+.dark .card { background: #1a1a2e !important; }

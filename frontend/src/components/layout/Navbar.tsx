@@ -9,6 +9,7 @@ import { cartApi } from '@/lib/api'
 import clsx from 'clsx'
 import SearchBar from './SearchBar'
 import AnnouncementBar from './AnnouncementBar'
+import ThemeToggle from '@/components/ui/ThemeToggle'
 import FlashSaleTimer from './FlashSaleTimer'
 
 export default function Navbar() {
@@ -94,6 +95,8 @@ export default function Navbar() {
               {/* Search */}
             <div className="hidden md:block">
               <SearchBar />
+              {/* Theme Toggle */}
+              <ThemeToggle />
             </div>
               
               {/* Wishlist */}

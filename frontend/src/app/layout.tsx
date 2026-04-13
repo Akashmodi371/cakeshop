@@ -21,6 +21,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+    <script dangerouslySetInnerHTML={{ __html: `
+      try {
+        const theme = localStorage.getItem('theme')
+        if (theme === 'dark') document.documentElement.classList.add('dark')
+      } catch {}
+    `}} />
+  </head>
       <body className="bg-pattern">
         <Navbar />
         <main className="min-h-screen">{children}</main>
