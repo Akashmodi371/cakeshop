@@ -134,7 +134,9 @@ export default function AdminOrdersPage() {
                     </div>
                     <div>
                       <p className="text-[10px] text-gray-400">Delivery</p>
-                      <p className="text-xs font-medium text-gray-700">{order.delivery_date || '—'}</p>
+                      <p className="text-xs font-medium text-gray-700">
+                        {order.delivery_date ? new Date(order.delivery_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
+                      </p>
                       <p className="text-[10px] text-gray-400">{order.delivery_time || ''}</p>
                     </div>
                     <div>

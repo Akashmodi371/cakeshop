@@ -379,8 +379,9 @@ export default function CakeDetailPage() {
             )}
 
             {/* Qty + Cart */}
-            {cake.is_available ? (
+                        {cake.is_available ? (
               <div className="mt-6 space-y-3">
+                {/* Quantity */}
                 <div className="flex items-center gap-4">
                   <div className="flex items-center border border-gray-200 rounded-full overflow-hidden">
                     <button onClick={() => setQty(p => Math.max(1, p - 1))}
@@ -398,35 +399,40 @@ export default function CakeDetailPage() {
                   </span>
                 </div>
 
-                <div className="flex gap-3">
+                {/* Buttons row */}
+                <div className="grid grid-cols-2 gap-3">
                   <button onClick={handleAddToCart} disabled={adding}
-                    className="btn-primary flex-1 py-3.5 text-base">
+                    className="btn-primary py-3.5 text-sm">
                     {adding ? <span className="spinner" /> : <ShoppingCart className="w-4 h-4" />}
                     {adding ? 'Adding...' : 'Add to Cart'}
                   </button>
                   <button
-                    onClick={() => user ? setShowOrder(true) : toast.error('Please login to place order')}
-                    className="btn-sky w-full justify-center gap-2 py-3.5"
-                  >
+                    onClick={() => user ? setShowOrder(true) : toast.error('Please login to book')}
+                    className="btn-sky py-3.5 text-sm">
                     📋 Book This Cake
-                  </button>
-                  <DeliveryDatePicker prepHours={cake.prep_time_hours || 24} />
-                  <button onClick={handleWishlist}
-                    className={clsx('btn-icon w-12 h-12 rounded-xl border transition-all',
-                      inWishlist ? 'border-brand-200 bg-brand-50 text-brand-500' : 'border-gray-200 hover:border-brand-200 hover:text-brand-500')}>
-                    <Heart className={clsx('w-5 h-5', inWishlist && 'fill-current')} />
                   </button>
                 </div>
 
-                <a href={`tel:${phone}`} className="btn-sky w-full justify-center gap-2 py-3.5">
+                {/* Wishlist full width */}
+                <button onClick={handleWishlist}
+                  className={'w-full py-3 rounded-xl border text-sm font-medium flex items-center justify-center gap-2 transition-all ' +
+                    (inWishlist ? 'border-brand-200 bg-brand-50 text-brand-500' : 'border-gray-200 hover:border-brand-200 hover:text-brand-500 text-gray-500')}>
+                  <Heart className={inWishlist ? 'w-4 h-4 fill-current' : 'w-4 h-4'} />
+                  {inWishlist ? 'Saved to Wishlist' : 'Save to Wishlist'}
+                </button>
+
+                {/* Call button */}
+                <a href={'tel:' + phone} className="btn-secondary w-full justify-center gap-2 py-3.5 border-gray-200 text-gray-600">
                   <Phone className="w-4 h-4" />
                   Call to Order Directly
                 </a>
+                {/* Delivery Date Picker */}
+            <DeliveryDatePicker prepHours={cake.prep_time_hours || 24} />
               </div>
             ) : (
               <div className="mt-6 p-4 bg-gray-50 rounded-2xl text-center">
                 <p className="text-gray-500 font-medium">Currently unavailable</p>
-                <a href={`tel:${phone}`} className="btn-primary mt-3 inline-flex gap-2">
+                <a href={'tel:' + phone} className="btn-primary mt-3 inline-flex gap-2">
                   <Phone className="w-4 h-4" /> Call for availability
                 </a>
               </div>
