@@ -38,13 +38,13 @@ export default async function HomePage() {
                 </div>
               )}
               <h1 className="font-display text-5xl md:text-6xl font-semibold text-gray-900 leading-[1.1] animate-fade-up delay-100">
-                {hero?.title || 'Barwaha Ki Sabse'}{' '}
-                <span className="bg-gradient-to-r from-brand-500 to-sky-500 bg-clip-text text-transparent">
-                  Moment
-                </span>
-              </h1>
+                  {hero?.title || 'Barwaha Ki'}{' '}
+                  <span className="bg-gradient-to-r from-brand-500 to-sky-500 bg-clip-text text-transparent">
+                    {hero?.title ? '' : 'Sabse Meethi Bakery'}
+                  </span>
+                </h1>
               <p className="text-gray-500 text-lg mt-5 leading-relaxed animate-fade-up delay-200">
-                {hero?.subtitle || 'Handcrafted cakes made with the finest ingredients, baked fresh to your doorstep with love.'}
+                {hero?.subtitle || 'Agrawal Cake House — Barwaha mein handcrafted cakes, fresh daily, delivered with love. 🎂'}
               </p>
 
               <div className="flex flex-wrap gap-3 mt-8 animate-fade-up delay-300">

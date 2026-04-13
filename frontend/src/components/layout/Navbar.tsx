@@ -9,6 +9,7 @@ import { cartApi } from '@/lib/api'
 import clsx from 'clsx'
 import SearchBar from './SearchBar'
 import AnnouncementBar from './AnnouncementBar'
+import FlashSaleTimer from './FlashSaleTimer'
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -42,6 +43,11 @@ export default function Navbar() {
     <>
       {/* Top bar */}
       <AnnouncementBar />
+      <FlashSaleTimer
+        title="⚡ Special Offer Today!"
+        discount="FREE DELIVERY"
+        link="/cakes"
+      />
       
 {/* Main navbar */}
       <nav className={clsx(
