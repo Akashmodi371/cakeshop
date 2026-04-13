@@ -5,6 +5,7 @@ import Navbar from '@/components/layout/Navbar'
 import CartDrawer from '@/components/layout/CartDrawer'
 import WhatsAppButton from '@/components/layout/WhatsAppButton'
 import Footer from '@/components/layout/Footer'
+import WelcomePopup from '@/components/layout/WelcomePopup'
 
 export const metadata: Metadata = {
   title: { default: 'Agrawal Cake House Barwaha', template: '%s | Agrawal Cake House' },
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="min-h-screen">{children}</main>
         <Footer />
         <CartDrawer />
+        <WelcomePopup />
         <WhatsAppButton />
         <Toaster
           position="top-center"

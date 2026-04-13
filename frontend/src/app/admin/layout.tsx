@@ -2,11 +2,12 @@
 import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { LayoutDashboard, Cake, Tag, Megaphone, Flag, Settings, Users, LogOut, ChevronRight, ShieldCheck, Menu, X, Package } from 'lucide-react'
+import { LayoutDashboard, Cake, Tag, Megaphone, Flag, Settings, Users, LogOut, ChevronRight, ShieldCheck, Menu, X, Package, Camera } from 'lucide-react'
 import { useAuthStore } from '@/store'
 import clsx from 'clsx'
 
 const NAV = [
+  { href: '/quick-upload', label: 'Quick Upload 📸', icon: Camera },
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/cakes', label: 'Cakes', icon: Cake },
   { href: '/admin/categories', label: 'Categories', icon: Tag },
