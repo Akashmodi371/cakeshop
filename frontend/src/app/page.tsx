@@ -39,13 +39,13 @@ export default async function HomePage() {
                 </div>
               )}
               <h1 className="font-display text-5xl md:text-6xl font-semibold text-gray-900 leading-[1.1] animate-fade-up delay-100">
-                  {hero?.title || 'Barwaha Ki'}{' '}
+                  {hero?.title || 'AGRAWAL CAKE'}{' '}
                   <span className="bg-gradient-to-r from-brand-500 to-sky-500 bg-clip-text text-transparent">
-                    {hero?.title ? '' : 'Sabse Meethi Bakery'}
+                    {hero?.title ? '' : 'HOUSE BARWAHA'}
                   </span>
                 </h1>
               <p className="text-gray-500 text-lg mt-5 leading-relaxed animate-fade-up delay-200">
-                {hero?.subtitle || 'Agrawal Cake House — Barwaha mein handcrafted cakes, fresh daily, delivered with love. 🎂'}
+                {hero?.subtitle || 'Barwaha mein handcrafted cakes, fresh daily, delivered with love. 🎂'}
               </p>
 
               <div className="flex flex-wrap gap-3 mt-8 animate-fade-up delay-300">
@@ -78,7 +78,7 @@ export default async function HomePage() {
               <div className="relative w-80 h-80 md:w-96 md:h-96">
                 <div className="absolute inset-0 bg-gradient-to-br from-brand-100 to-sky-100 rounded-full animate-float" />
                 <img
-                  src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600"
+                  src="https://res.cloudinary.com/dywanlhyr/image/upload/v1776158516/Instagram_w9fdg0.png"
                   alt="Beautiful cake"
                   className="absolute inset-4 w-[calc(100%-2rem)] h-[calc(100%-2rem)] object-cover rounded-full border-4 border-white shadow-pink-lg"
                 />
@@ -93,7 +93,7 @@ export default async function HomePage() {
                 <div className="absolute -right-4 bottom-16 bg-white rounded-2xl shadow-card px-3 py-2 flex items-center gap-2 animate-float" style={{ animationDelay: '1s' }}>
                   <span className="text-xl">⭐</span>
                   <div>
-                    <p className="text-xs font-semibold text-gray-700">500+ Reviews</p>
+                    <p className="text-xs font-semibold text-gray-700">5000+ Reviews</p>
                     <p className="text-[10px] text-gray-400">4.9 Rating</p>
                   </div>
                 </div>
